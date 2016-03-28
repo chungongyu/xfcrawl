@@ -1,0 +1,74 @@
+{
+  "flag": 1,
+  "id": "tieba.baidu.com",
+  "pattern_list": [
+    {
+      "pattern": "/f/index/forumclass$",
+      "rule_list": [
+        {
+          "xpath": "//ul[@id=\"f_class_menu\"]/li/a",
+          "key": "pclazz",
+          "children": [
+            {
+              "xpath": "@href",
+              "key": "url",
+              "type": "url"
+            },
+            {
+              "xpath": "text()",
+              "key": "name"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "/f/index/forumpark\\?pcn=.*$",
+      "rule_list": [
+        {
+          "xpath": "//ul[contains(@class,\"class_list\")]/li/a",
+          "key": "clazz",
+          "children": [
+            {
+              "xpath": "@href",
+              "key": "url",
+              "type": "url"
+            },
+            {
+              "xpath": "text()",
+              "key": "name"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pattern": "/f/index/forumpark\\?cn=.*$",
+      "rule_list": [
+        {
+          "xpath": "//div[contains(@class,\"ba_list\")]/div[contains(@class,\"ba_info\")]/a",
+          "key": "detail",
+          "children": [
+            {
+              "xpath": "img/@src",
+              "key": "pic"
+            },
+            {
+              "xpath": "div[@class=\"ba_content\"]/p[@class=\"ba_name\"]/text()",
+              "key": "name"
+            },
+            {
+              "xpath": "div[@class=\"ba_content\"]/p[contains(@class,\"ba_num\")]/span[@class=\"ba_m_num\"]/text()",
+              "key": "m_num"
+            },
+            {
+              "xpath": "div[@class=\"ba_content\"]/p[contains(@class,\"ba_num\")]/span[@class=\"ba_p_num\"]/text()",
+              "key": "p_num"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "type": "html"
+}

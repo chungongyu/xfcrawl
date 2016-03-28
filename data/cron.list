@@ -1,0 +1,1 @@
+{"id":"tieba.baidu.com", "flag":1, "cron":"30 9 * * *", "cmd_list":[{"wget":{"url":"http://tieba.baidu.com/f/index/forumclass"}}]}
