@@ -13,6 +13,7 @@ from lxml import etree
 import pika
 import pymongo
 
+from rules import Template
 import utils
 
 _logger = logging.getLogger('extractor')
@@ -24,6 +25,12 @@ def consume_isvalid(**parms):
     return True
 
 def consume_get_template(mongodb, template_id):
+    template = mongodb.spider.templates.find_one({'id':template_id})
+    if template and template['flag'] == 1: # enabled
+        return Template(template)
+    return None
+
+def consume_get_template2(mongodb, template_id):
     return mongodb.spider.templates.find_one({'id':template_id})
 
 def consume_get_rulelist(mongodb, template_id, url):
@@ -46,7 +53,15 @@ def consume_urlencode(url, encoding):
     url = urlparse.urlunparse(parts)
     return url.decode(encoding)
 
-def consume_extract_html(rule_list, url, data):
+def consume_extract_html(template, url, data):
+    url_list, result = [], {}
+
+    charset = chardet.detect(data)
+    doc = etree.HTML(data, parser=etree.HTMLParser(encoding=charset['encoding']))
+
+    return template.process(url, doc)
+
+def consume_extract_html2(rule_list, url, data):
     def _extract_html_(rule, doc, url_list, result):
         tree = doc.getroottree()
         if rule.has_key('xpath'):
@@ -92,13 +107,13 @@ def consume_extract_html(rule_list, url, data):
 
     return url_list, result
 
-def consume_extract_json(rule_list, url, data):
+def consume_extract_json(template, url, data):
     pass
 
-def consume_extract_xml(rule_list, url, data):
+def consume_extract_xml(template, url, data):
     pass
 
-def consume_extract_text(rule_list, url, data):
+def consume_extract_text(template, url, data):
     pass
 
 def consume_extract(mongodb, **parms):
@@ -111,9 +126,12 @@ def consume_extract(mongodb, **parms):
             }
 
     url = utils.utf8(parms['wget']['url'])
-    template_type, rule_list = consume_get_rulelist(mongodb, parms['id'], url)
-    if rule_list and extractor_list.has_key(template_type):
-        return extractor_list[template_type](rule_list, url, base64.b64decode(parms['data']['page']))
+    #template_type, rule_list = consume_get_rulelist(mongodb, parms['id'], url)
+    template = consume_get_template(mongodb, parms['id'])
+    if template and extractor_list.has_key(template.typ):
+        return extractor_list[template.typ](template, url, base64.b64decode(parms['data']['page']))
+    #if rule_list and extractor_list.has_key(template_type):
+    #    return extractor_list[template_type](rule_list, url, base64.b64decode(parms['data']['page']))
 
     return None, None
 

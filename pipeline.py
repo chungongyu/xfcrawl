@@ -13,7 +13,7 @@ def consume_isvalid(**parms):
         return False
     if not parms['wget'].has_key('url') or not parms['wget']['url']:
         return False
-    if not parms.has_key('result') or not parms['result']:
+    if not parms.has_key('result'):
         return False
 
     return True
@@ -22,14 +22,12 @@ def consume_callback(channel, method, properties, body, options):
     _logger.info(body)
     try:
         data = json.loads(body)
-        """
         table = options['mongodb'].spider.datum
         if consume_isvalid(**data):
             url = data['wget']['url']
             table.update_one({"wget.url": url}, {"$set":data}, upsert=True)
         else:
             _logger.error(body)
-        """
 
     except Exception, e:
         _logger.error(str(e))

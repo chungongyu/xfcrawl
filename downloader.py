@@ -64,7 +64,7 @@ def consume_ratelimit(options, url):
     try:
         redisdb = options['redis']
         host = consume_get_host(url)
-        parms = redisdb.hget(host)
+        parms = redisdb.hget('rate-limit', host)
         if parms:
             parms = json.loads(parms)
             r = RateLimiter(redisdb, parms['window'], parms['limit'], parms['delta'])
@@ -89,7 +89,7 @@ def consume_request(options, **parms):
             headers['user-agent'] = options['wget.user-agent']
 
         # get token
-        consume_ratelimit(wget['url']);
+        consume_ratelimit(options, wget['url']);
 
         try:
             if method == 'get':

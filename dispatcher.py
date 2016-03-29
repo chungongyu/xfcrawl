@@ -69,7 +69,7 @@ def consume_filter(options, **parms):
     if consume_isvalid(**parms):
         links = map(lambda x: string.strip(utils.utf8(x)), parms['data']['links'])
 
-        for _filter in [_filter_js, _filter_site, _filter_state]:
+        for _filter in [_filter_js, _filter_state]:
             links = list(_filter(options, links))
         
         return links
